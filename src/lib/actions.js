@@ -3,7 +3,7 @@
 import dbConnect from '@/config/dbConnect';
 import Post from '@/models/postSchema';
 import User from '@/models/userSchema';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { signIn, signOut } from './auth';
 
@@ -86,6 +86,11 @@ export const deleteUser = async (formData) => {
   }
 };
 
+export const handleGoogleLogin = async () => {
+  'use server';
+  await signIn('google');
+};
+
 export const handleGithubLogin = async () => {
   'use server';
   await signIn('github');
@@ -93,7 +98,7 @@ export const handleGithubLogin = async () => {
 
 export const handleLogout = async () => {
   'use server';
-  await signOut();
+  await signOut({ redirect: true, redirectTo: '/login' });
 };
 
 export const register = async (previousState, formData) => {

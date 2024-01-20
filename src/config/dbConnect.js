@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGO_CONN_URL;
+const MONGODB_URI = process.env.NEXT_PUBLIC_MONGO_CONN_URL;
 
 if (!MONGODB_URI) {
   throw new Error('Please define your db connection string in environment');
