@@ -5,27 +5,36 @@ import Post from '@/models/postSchema';
 import User from '@/models/userSchema';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
-import { signIn, signOut } from './auth';
+import slugify from 'slugify';
+import { auth, signIn, signOut } from './auth';
 
 export const addPost = async (prevState, formData) => {
   // const title = formData.get("title");
   // const desc = formData.get("desc");
   // const slug = formData.get("slug");
 
-  const { title, desc, slug, userId } = Object.fromEntries(formData);
+  const { title, desc } = Object.fromEntries(formData);
+  // console.log(slugify(title), { lower: true });
+  const session = await auth();
+  const { user } = session || {};
 
   try {
-    dbConnect();
+    await dbConnect();
+    const slug = slugify(title, { lower: true });
+    console.log('🚀 ~ addPost ~ slug:', slug);
     const newPost = new Post({
       title,
       desc,
-      slug,
-      userId,
+      // slug,
+      userId: user?.id,
     });
+
+    console.log('🚀 ~ addPost ~ newPost:', newPost);
+    console.log('🚀 ~ addPost ~ slug:', newPost.slug);
 
     await newPost.save();
     console.log('saved to db');
-    revalidatePath('/blog');
+    revalidatePath('/blogs');
     revalidatePath('/admin');
   } catch (err) {
     console.log(err);
