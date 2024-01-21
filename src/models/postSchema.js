@@ -10,18 +10,18 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    img: {
+    slug: {
       type: String,
+      required: true,
+      unique: true,
     },
     userId: {
       type: String,
       required: true,
     },
-    // slug: {
-    //   type: String,
-    //   required: true,
-    //   unique: true,
-    // },
+    img: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -9,35 +9,29 @@ import slugify from 'slugify';
 import { auth, signIn, signOut } from './auth';
 
 export const addPost = async (prevState, formData) => {
-  // const title = formData.get("title");
-  // const desc = formData.get("desc");
-  // const slug = formData.get("slug");
-
   const { title, desc } = Object.fromEntries(formData);
-  // console.log(slugify(title), { lower: true });
+
   const session = await auth();
   const { user } = session || {};
 
   try {
     await dbConnect();
     const slug = slugify(title, { lower: true });
-    console.log('🚀 ~ addPost ~ slug:', slug);
+
     const newPost = new Post({
       title,
       desc,
-      // slug,
+      slug,
       userId: user?.id,
+      img: '',
     });
 
-    console.log('🚀 ~ addPost ~ newPost:', newPost);
-    console.log('🚀 ~ addPost ~ slug:', newPost.slug);
-
     await newPost.save();
-    console.log('saved to db');
+    console.log('Saved to db');
     revalidatePath('/blogs');
     revalidatePath('/admin');
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return { error: 'Something went wrong!' };
   }
 };
